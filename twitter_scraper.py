@@ -2,14 +2,17 @@ import pandas as pd
 import tweepy
 import config 
 import auth
+import datetime
 import logging
 
 # function should return a list of tweets, in order of most recent, that match the query.
-def search_by_keyword(api, date_since, date_until, words):
+def search_by_keyword(api, date_since='2022-10-14', date_until=datetime.datetime.now().date(), words="kanye", max_tweets=10):
     df = pd.DataFrame(columns=['created_at', 'id', 'id_str', 'text', 'truncated', 'entities', 'metadata', 'source', 'likes', 'retweets', 'user'])
-    
-    tweets = tweepy.Cursor(api.search_tweets, q=words, lang='en', since=date_since, until=date_until, tweet_mode="extended").items(100)
-    
+    try:
+        tweets = tweepy.Cursor(api.search_tweets, q=words, lang='en', since=date_since, until=date_until, tweet_mode="extended", wait_on_rate_limit=True,wait_on_rate_limit_notify=True ).items(int(max_tweets))
+    except tweepy.TweepError as e:
+        logging.error(e)
+        print(e)
     #tweets = tweepy.Cursor(api.search_tweets, q=words, lang="en", wait_on_rate_limit=True, since=date_since, until=date_until, tweet_mode='extended').items(10)
     
     list_tweets = [tweet for tweet in tweets] # loop through each tweet returned and add to list
@@ -54,10 +57,22 @@ def main():
     date_since = '2022-10-10'
     date_until = '2022-10-14'
     
-    search_by_keyword(api_socket, date_since, date_until, query)
+    query = input("Please input search query: ")
+    hours_since = input("Please input the number of hours ago you'd like to search: ")
+    max_tweets = input("Please input the maximum number of tweets you'd like to returned: ")
+    
+    date_since = hours_ago_to_datetime(hours_since)
+    date_since = date_since.date()
+    search_by_keyword(api_socket, date_since, query, max_tweets=max_tweets)
     
 
-    
+def hours_ago_to_datetime(hours_ago):
+    if int(hours_ago)>=24:
+        days_ago = int(hours_ago)/24
+        days_ago = int(days_ago)
+        hours_ago = int(hours_ago) - (days_ago%24)
+        date_since = datetime.datetime.now() - datetime.timedelta(days=days_ago, hours=hours_ago)
+    return datetime.datetime.now() - datetime.timedelta(hours=hours_ago)
 
      
 
