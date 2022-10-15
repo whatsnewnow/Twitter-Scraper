@@ -1,7 +1,7 @@
 # Testing social media scraper
 
 ## Prerequisite requirements
-- A Twitter Developer Account
+- A verified Twitter Developer account
 - Twitter Developer Account API Keys (Consumer and Client Keys specifically)
 - Python 3.8 or later.
 - Pandas Python library. (Use pip install)
