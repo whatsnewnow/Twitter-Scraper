@@ -11,8 +11,8 @@ def authenticateConfig():
 
     # Authenticate to Twitter    
     try: 
-        auth = tweepy.OAuthHandler(config.CONSUMER_KEY, config.CONSUMER_SECRET_KEY)
-        auth.set_access_token(config.ACCESS_TOKEN, config.ACCESS_TOKEN_SECRET)
+        auth = tweepy.OAuthHandler(config.api_key, config.api_key_secret)
+        auth.set_access_token(config.access_token, config.access_token_secret)
 
         api = tweepy.API(auth, wait_on_rate_limit=True, timeout=30) # Setting these properties true will make the api to automatically wait for rate limits to replenish
 
